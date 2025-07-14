@@ -1,0 +1,11 @@
+movie_id,title,genres,director,keywords
+1,Inception,"Sci-Fi,Action","Christopher Nolan","dreams,subconscious,heist"
+2,Interstellar,"Sci-Fi,Adventure","Christopher Nolan","space,time,black hole"
+3,The Matrix,"Sci-Fi,Action","Lana Wachowski","simulation,reality,chosen one"
+4,Attack on Titan,"Anime,Action","Tetsurō Araki","titans,apocalypse,scouts"
+5,Death Note,"Anime,Thriller","Tetsurō Araki","detective,supernatural,justice"
+6,Avatar: The Last Airbender,"Anime,Adventure","Michael Dante DiMartino","elements,war,coming of age"
+7,Stranger Things,"Horror,Sci-Fi","The Duffer Brothers","upside down,80s,supernatural"
+8,The Witcher,"Fantasy,Action","Lauren Schmidt","monsters,magic,destiny"
+9,Tenet,"Sci-Fi,Action","Christopher Nolan","time inversion,espionage"
+10,Arrival,"Sci-Fi,Drama","Denis Villeneuve","aliens,language,time"
