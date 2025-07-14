@@ -2,7 +2,7 @@ import streamlit as st
 from recommender import MovieRecommender
 
 # Initialize recommender
-recommender = MovieRecommender('data/movies1.csv', 'data/ratings1.csv')
+recommender = MovieRecommender('movies1.csv', 'ratings1.csv')
 
 # Streamlit UI
 st.title('🎬 Movie Recommendation System')
