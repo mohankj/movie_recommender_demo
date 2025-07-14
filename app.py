@@ -2,10 +2,10 @@ import streamlit as st
 from recommender import MovieRecommender
 
 # Initialize recommender
-recommender = MovieRecommender('movies1.csv', 'ratings1.csv')
+recommender = MovieRecommender('movies.csv', 'ratings.csv')
 
 # Streamlit UI
-st.title('🎬 Movie Recommendation System')
+st.title('🎬 Movie Recommendation System By MJ For PJ')
 st.markdown("""
 Get personalized movie recommendations based on your ratings!
 """)
@@ -41,7 +41,6 @@ if st.button('Get Recommendations'):
         with st.expander(f"🌟 {row['title']} (Predicted rating: {row.get('recommendation_category', 'N/A')})"):
             st.markdown(f"""
             **Genres:** {row['genres']}  
-            **Director:** {row['director']}  
             **Why recommended:** Similar to your perfection-rated movies
             """)
 
