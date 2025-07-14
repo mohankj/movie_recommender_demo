@@ -23,7 +23,7 @@ class MovieRecommender:
         
         # Create combined features
         self.movies['combined_features'] = self.movies.apply(
-            lambda x: f"{x['genres']} {x['director']} {x['keywords']}", axis=1)
+            lambda x: f"{x['genres']} {x['cast']} {x['crew']} {x['keywords']}", axis=1)
         
         # TF-IDF Vectorization
         self.tfidf = TfidfVectorizer(stop_words='english')
@@ -70,7 +70,7 @@ class MovieRecommender:
     def predict_ratings(self, user_id):
         try:
             # Initialize empty result with expected columns
-            empty_result = pd.DataFrame(columns=['movie_id', 'title', 'genres', 'director', 'predicted_rating'])
+            empty_result = pd.DataFrame(columns=['movie_id', 'title', 'genres', 'predicted_rating'])
             
             # Handle unknown users
             if user_id not in self.user_item_matrix.index:
@@ -91,7 +91,7 @@ class MovieRecommender:
             
             # Merge with movie data
             predictions = predictions.merge(
-                self.movies[['movie_id', 'title', 'genres', 'director']],
+                self.movies[['movie_id', 'title', 'genres']],
                 on='movie_id',
                 how='left'
             )
@@ -110,7 +110,7 @@ class MovieRecommender:
             
         except Exception as e:
             print(f"Prediction error: {str(e)}")
-            return pd.DataFrame(columns=['movie_id', 'title', 'genres', 'director', 'predicted_rating'])
+            return pd.DataFrame(columns=['movie_id', 'title', 'genres', 'predicted_rating'])
     
     def get_user_perfection_ratings(self, user_id):
         """Get movies rated as 'Perfection' (4) by user"""
@@ -134,26 +134,27 @@ class MovieRecommender:
         
         # Content-based recommendations
         cb_recs = self.get_content_based_recommendations(
-            perfection_movies['title'].tolist(), top_n*2)
-        
+            perfection_movies['title'].tolist(), top_n*50)
+        print("cb_res",cb_recs.shape)
         # Rating predictions
         pred_ratings = self.predict_ratings(user_id)
-        
-        # Get list of already rated movies
-        rated_movies = self.ratings[self.ratings['user_id'] == user_id]['movie_id'].tolist()
-        
-        # Filter content-based recs to only unwatched movies
-        cb_recs_unwatched = cb_recs[~cb_recs['movie_id'].isin(rated_movies)]
-        
+        print("pred_ratings",pred_ratings.shape)
+      
+        print("unwatch cb_res",cb_recs['movie_id'].nunique())
         # Merge predictions with content-based recs on movie_id
         hybrid_recs = pd.merge(
-            cb_recs_unwatched,
+            cb_recs,
             pred_ratings,
             on='movie_id',
             how='inner',  # Only keep movies that appear in both
             suffixes=('', '_pred')
         )
-        print(hybrid_recs.columns)
+        print(f"Merged before filtering: {hybrid_recs.shape}")
+        
+        # 4. Now filter out watched movies
+        rated_movies = self.ratings[self.ratings['user_id'] == user_id]['movie_id'].tolist()
+        hybrid_recs = hybrid_recs[~hybrid_recs['movie_id'].isin(rated_movies)]
+        print(f"After filtering watched: {hybrid_recs.shape}")
         
         # Add average ratings (no merge - use pre-calculated series)
         hybrid_recs['avg_rating'] = hybrid_recs['movie_id'].map(self.avg_ratings)
@@ -185,9 +186,9 @@ class MovieRecommender:
         
         # Apply the conversion
         hybrid_recs['recommendation_category'] = hybrid_recs['combined_score'].apply(score_to_category)
-        
+        print(hybrid_recs.columns)
         # Select and order the columns for output
-        result_cols = ['movie_id', 'title', 'genres', 'director', 
+        result_cols = ['movie_id', 'title', 'genres', 
                       'recommendation_category', 'combined_score']
         
         
